@@ -247,6 +247,21 @@ execute_statement(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
 }
 
 static ERL_NIF_TERM
+get_column_names(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
+    if (argc != 1)
+        return enif_make_badarg(env);
+    erlang_resource<duckdb::QueryResult>* result = nullptr;
+    if(!enif_get_resource(env, argv[0], query_result_nif_type, (void**)&result))
+        return enif_make_badarg(env);
+    std::vector<ERL_NIF_TERM> names;
+    for(auto &s: result->data->names) {
+        names.push_back(nif::make_binary_term(env, s.c_str(), s.size()));
+    }
+
+    return enif_make_list_from_array(env, &names[0], names.size());
+}
+
+static ERL_NIF_TERM
 fetch_chunk(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]) {
   if (argc != 1)
     return enif_make_badarg(env);
@@ -570,6 +585,7 @@ static ErlNifFunc nif_funcs[] = {
   {"prepare_statement", 2, prepare_statement, ERL_NIF_DIRTY_JOB_IO_BOUND},
   {"execute_statement", 1, execute_statement, ERL_NIF_DIRTY_JOB_IO_BOUND},
   {"execute_statement", 2, execute_statement, ERL_NIF_DIRTY_JOB_IO_BOUND},
+  {"get_column_names", 1, get_column_names, ERL_NIF_DIRTY_JOB_IO_BOUND},
   {"fetch_chunk", 1, fetch_chunk, ERL_NIF_DIRTY_JOB_IO_BOUND},
   {"fetch_all", 1, fetch_all, ERL_NIF_DIRTY_JOB_IO_BOUND},
   {"appender", 2, appender, ERL_NIF_DIRTY_JOB_IO_BOUND},

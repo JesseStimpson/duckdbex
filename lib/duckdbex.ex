@@ -167,6 +167,21 @@ defmodule Duckdbex do
     do: Duckdbex.NIF.execute_statement(statement, args)
 
   @doc """
+  Gets the list of column names from the query result.
+
+  ## Examples
+  ```
+  iex> {:ok, db} = Duckdbex.open()
+  iex> {:ok, conn} = Duckdbex.connection(db)
+  iex> {:ok, res} = Duckdbex.query(conn, "SELECT 1 AS n;")
+  iex> ["n"] = Duckdbex.get_column_names(res)
+  ```
+  """
+  @spec get_column_names(query_result()) :: list()
+  def get_column_names(query_result) when is_reference(query_result),
+    do: Duckdbex.NIF.get_column_names(query_result)
+
+  @doc """
   Fetches a data chunk from the query result.
 
   Returns empty list if there are no more results to fetch.
