@@ -37,10 +37,10 @@ defmodule Duckdbex.NIF do
   @spec execute_statement(statement(), list()) :: {:ok, query_result()} | {:error, reason()}
   def execute_statement(_statement, _args), do: :erlang.nif_error(:not_loaded)
 
-  @spec fetch_chunk(query_result()) :: :ok | {:error, reason()}
+  @spec fetch_chunk(query_result()) :: list()
   def fetch_chunk(_query_result), do: :erlang.nif_error(:not_loaded)
 
-  @spec fetch_all(query_result()) :: :ok | {:error, reason()}
+  @spec fetch_all(query_result()) :: list()
   def fetch_all(_query_result), do: :erlang.nif_error(:not_loaded)
 
   @spec appender(connection(), binary()) :: {:ok, appender()} | {:error, reason()}

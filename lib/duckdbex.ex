@@ -64,6 +64,9 @@ defmodule Duckdbex do
   that all agents on the system have removed the database reference from their working memory before close
   is called.
 
+  See http://erlang.org/pipermail/erlang-questions/2020-November/100131.html for a discussion on why you
+  might want to call close/1 explicitly instead of relying on the garbage collector.
+
   ## Examples
   ```
   iex> {:ok, db} = Duckdbex.open("my_database.duckdb")
@@ -176,7 +179,7 @@ defmodule Duckdbex do
   iex> [[1]] = Duckdbex.fetch_chunk(res)
   ```
   """
-  @spec fetch_chunk(query_result()) :: :ok | {:error, reason()}
+  @spec fetch_chunk(query_result()) :: list()
   def fetch_chunk(query_result) when is_reference(query_result),
     do: Duckdbex.NIF.fetch_chunk(query_result)
 
@@ -194,7 +197,7 @@ defmodule Duckdbex do
   iex> [[1]] = Duckdbex.fetch_all(res)
   ```
   """
-  @spec fetch_all(query_result()) :: :ok | {:error, reason()}
+  @spec fetch_all(query_result()) :: list()
   def fetch_all(query_result) when is_reference(query_result),
     do: Duckdbex.NIF.fetch_all(query_result)
 
